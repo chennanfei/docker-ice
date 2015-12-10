@@ -20,18 +20,17 @@ RUN \
   unzip .grails/wrapper/${GRAILS_VERSION}/grails-${GRAILS_VERSION}.zip -d .grails/wrapper/${GRAILS_VERSION} && \
   rm -rf .grails/wrapper/${GRAILS_VERSION}/grails-${GRAILS_VERSION}.zip
 
-WORKDIR ${INSTALL_DIR} 
+WORKDIR ${INSTALL_DIR}
+
+EXPOSE 8080
+ENTRYPOINT ["/opt/ice/grailsw"]
+
+RUN mkdir /mnt/ice_processor && mkdir /mnt/ice_reader
+
+ENV version 1.0
 
 # Ice setup
-RUN \
-  mkdir /mnt/ice_processor && \
-  mkdir /mnt/ice_reader && \
-  curl https://codeload.github.com/chennanfei/ice/tar.gz/master | tar -zx -C /opt/ice --strip 1 && \
+RUN curl https://codeload.github.com/chennanfei/ice/tar.gz/master | tar -zx -C /opt/ice --strip 1 && \
   grails ${JAVA_OPTS} wrapper && \
   rm grails-app/i18n/messages.properties && \ 
   sed -i -e '1i#!/bin/bash\' grailsw
-
-EXPOSE 8080
-
-CMD ["/opt/ice/grailsw"]
-
